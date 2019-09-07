@@ -131,13 +131,35 @@ function! s:Tmux_Vars()
   endif
 endfunction
 
+" Send text from a motion or text object
+function! s:TslimeOperator(motion_type)
+  let sel_save = &selection
+  let &selection = "inclusive"
+  let reg_save = @@
+
+  if a:motion_type == 'line'
+    silent execute "normal! '[V']y"
+  elseif a:motion_type == 'char'
+    silent execute "normal! `[v`]y"
+  elseif a:motion_type == 'block'
+    silent execute "normal! `[\<C-V>`]y"
+  endif
+
+  call Send_to_Tmux(@@)
+
+  let &selection = sel_save
+  let @@ = reg_save
+endfunction
+
 vnoremap <silent> <Plug>SendSelectionToTmux "ry :call Send_to_Tmux(@r)<CR>
 nmap     <silent> <Plug>NormalModeSendToTmux vip<Plug>SendSelectionToTmux
 
 vnoremap <silent> <Plug>SendHaskellToTmux "ry :call Send_Hask_to_Tmux(@r)<CR>
 nmap     <silent> <Plug>NormalModeHaskellToTmux vip<Plug>SendHaskellToTmux
 
+nnoremap <silent> <Plug>(TslimeOperator) :set operatorfunc=<SID>TslimeOperator<CR>g@
+
 nnoremap          <Plug>SetTmuxVars :call <SID>Tmux_Vars()<CR>
 
 command! -nargs=* Tmux call Send_to_Tmux('<Args><CR>')
-command! -nargs=* Tmux call Send_Hask_to_Tmux('<Args><CR>')
+command! TmuxChooseTarget call <SID>Tmux_Vars()
