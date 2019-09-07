@@ -15,7 +15,8 @@ function! Send_keys_to_Tmux(keys)
     call <SID>Tmux_Vars()
   endif
 
-  call system("tmux send-keys -t " . s:tmux_target() . " " . a:keys)
+  let add_newline = exists("g:tslime_ensure_newline") && (a:keys[-1:] != "\n")
+  call system("tmux send-keys -t " . s:tmux_target() . " " . a:keys . (add_newline ? "\n" : ""))
 endfunction
 
 " Main function.
@@ -25,7 +26,7 @@ function! Send_to_Tmux(text)
 endfunction
 
 function! Send_Hask_to_Tmux(text)
-  call Send_keys_to_Tmux('":{'.escape(a:text, '\"$`').':}"')
+  call Send_keys_to_Tmux('":{\n'.escape(a:text, '\"$`').'\n:}\n')
 endfunction
 
 function! s:tmux_target()
