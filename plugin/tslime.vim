@@ -15,8 +15,7 @@ function! Send_keys_to_Tmux(keys)
     call <SID>Tmux_Vars()
   endif
 
-  let add_newline = exists("g:tslime_ensure_newline") && (a:keys[-1:] != "\n")
-  call system("tmux send-keys -t " . s:tmux_target() . " " . a:keys . (add_newline ? "\n" : ""))
+  call system("tmux send-keys -t " . s:tmux_target() . " " . a:keys . "")
 endfunction
 
 " Main function.
@@ -26,24 +25,11 @@ function! Send_to_Tmux(text)
 endfunction
 
 function! Send_Hask_to_Tmux(text)
-  call Send_keys_to_Tmux('":{\n'.escape(a:text, '\"$`').'\n:}\n')
+  call Send_to_Tmux(":{". a:text .":}")
 endfunction
 
 function! s:tmux_target()
   return '"' . g:tslime['session'] . '":' . g:tslime['window'] . "." . g:tslime['pane']
-endfunction
-
-function! s:set_tmux_buffer(text)
-  let buf = substitute(a:text, "'", "\\'", 'g')
-  call system("tmux load-buffer -", buf)
-endfunction
-
-function! SendToTmux(text)
-  call Send_to_Tmux(a:text)
-endfunction
-
-function! SendHaskToTmux(text)
-  call Send_Hask_to_Tmux(a:text)
 endfunction
 
 " Session completion
@@ -152,15 +138,13 @@ function! s:TslimeOperator(motion_type)
   let @@ = reg_save
 endfunction
 
-vnoremap <silent> <Plug>SendSelectionToTmux "ry :call Send_to_Tmux(@r)<CR>
-nmap     <silent> <Plug>NormalModeSendToTmux vip<Plug>SendSelectionToTmux
+xnoremap <silent> <Plug>SendSelectionToTmux "xy :call Send_to_Tmux(@x)<CR>
 
-vnoremap <silent> <Plug>SendHaskellToTmux "ry :call Send_Hask_to_Tmux(@r)<CR>
-nmap     <silent> <Plug>NormalModeHaskellToTmux vip<Plug>SendHaskellToTmux
+xnoremap <silent> <Plug>SendHaskToTmux "xy :call Send_Hask_to_Tmux(@x)<CR>
 
 nnoremap <silent> <Plug>(TslimeOperator) :set operatorfunc=<SID>TslimeOperator<CR>g@
 
 nnoremap          <Plug>SetTmuxVars :call <SID>Tmux_Vars()<CR>
 
 command! -nargs=* Tmux call Send_to_Tmux('<Args><CR>')
-command! TmuxChooseTarget call <SID>Tmux_Vars()
+command!          TmuxTarget call <SID>Tmux_Vars()
