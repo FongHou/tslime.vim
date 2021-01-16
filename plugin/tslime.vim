@@ -24,10 +24,6 @@ function! Send_to_Tmux(text)
   call Send_keys_to_Tmux('"'.escape(a:text, '\"$`').'"')
 endfunction
 
-function! Send_Hask_to_Tmux(text)
-  call Send_to_Tmux(":{". a:text .":}")
-endfunction
-
 function! s:tmux_target()
   return '"' . g:tslime['session'] . '":' . g:tslime['window'] . "." . g:tslime['pane']
 endfunction
@@ -143,9 +139,12 @@ command!          TmuxTarget call <SID>Tmux_Vars()
 
 xnoremap <silent> <Plug>SendSelectionToTmux "xy :call Send_to_Tmux(@x)<CR>
 
-xnoremap <silent> <Plug>SendHaskToTmux "xy :call Send_Hask_to_Tmux(@x)<CR>
-
 nnoremap <silent> <Plug>(TslimeOperator) :set operatorfunc=<SID>TslimeOperator<CR>g@
 
 nnoremap          <Plug>SetTmuxVars :call <SID>Tmux_Vars()<CR>
 
+function! Send_GHCi_to_Tmux(text)
+  call Send_to_Tmux(":{". a:text .":}")
+endfunction
+
+xnoremap <silent> <Plug>(send-to-ghci) "xy :call Send_GHCi_to_Tmux(@x)<CR>
