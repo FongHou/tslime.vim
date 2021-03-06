@@ -137,7 +137,7 @@ endfunction
 command! -nargs=* Tmux call Send_to_Tmux('<Args><CR>')
 command!          TmuxTarget call <SID>Tmux_Vars()
 
-xnoremap <silent> <Plug>SendSelectionToTmux "xy :call Send_to_Tmux(@x)<CR>
+xnoremap <silent> <Plug>send-to-tmux "xy :call Send_to_Tmux(@x)<CR>
 
 nnoremap <silent> <Plug>(TslimeOperator) :set operatorfunc=<SID>TslimeOperator<CR>g@
 
