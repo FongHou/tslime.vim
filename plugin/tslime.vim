@@ -142,9 +142,3 @@ xnoremap <silent> <Plug>send-to-tmux "0y :call Send_to_Tmux(@0)<CR>
 nnoremap <silent> <Plug>(TslimeOperator) :set operatorfunc=<SID>TslimeOperator<CR>g@
 
 nnoremap          <Plug>SetTmuxVars :call <SID>Tmux_Vars()<CR>
-
-function! Send_GHCi_to_Tmux(text)
-  call Send_to_Tmux(":{". a:text .":}")
-endfunction
-
-xnoremap <silent> <Plug>(send-to-ghci) "xy :call Send_GHCi_to_Tmux(@x)<CR>
